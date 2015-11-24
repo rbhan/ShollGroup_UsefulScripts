@@ -1,0 +1,163 @@
+#******************************************************************#
+#   INPUT SCRIPT :: BUILDING FLEXIBLE PERIODIC LAMMPS DATA FILES   #
+#******************************************************************#
+
+#MAIN STRUCTURE FILENAME
+ZIF-8_PARK.xyz
+#ZIF-8_DFT.xyz
+
+#EXPAND THE UNIT CELL IN A CERTAIN NUMBER OF DIRECTIONS #3 3 3 
+1 1 1
+
+#LJ CUTOFF [Angstroms] :: this will decide whether the unit cell will expand automatically 
+15
+
+#BOND CORRECTION FACTOR
+0.28 
+#no less than 2.5 
+
+#METAL TO NEGLECT
+Zn
+
+#NUMBER OF LINKER NEAREST NEIGHBORS
+6
+
+#UNIT CELL LENGTHS [Angstroms] & UNIT CELL ANGLES [degrees] 
+16.991 16.991 16.991
+90.0 90.0 90.0
+
+#TRICLINIC UNIT CELL?
+NO
+
+#DFT
+#16.94302 16.94302 16.94302
+#90.0 90.0 90.0
+#PARK
+#16.991 16.991 16.991 
+#90.0 90.0 90.0
+
+#FRAGMENT NAME
+part_zif90REAL.xyz
+
+#NUMBER OF ATOM IN OLD AND NEW LINKER
+11 10
+
+#PRIMARY CARBON AND NITROGEN LABELS FOR OLD LINKER
+C1 N N
+
+#FRACTION OF LINKERS TO SWITCH [i.e. methyl to aldehyde groups]?
+0.5 
+#0.28 0.52 0.727 these get the equilibrium values correct
+
+#SHORT RANGE ORDER PARAMETER [defined by the probability of a linker seeing the other linker type], BETA, ERROR_TOL
+-1 100000 0.75
+
+#INTENSITY CURVE INPUTS [YES/NO, Majority LINKER HYDROGEN TYPE, Minority LINKER HYDROGEN TYPE, RANGE (start,stop,spacing), USER_DEFINED file_of_spacings]
+YES H3 H4
+USER_DEFINED intensity_spacing.in DATA_50m_50_KRISHNA.in
+#USER_DEFINED intensity_spacing.in
+#RANGE 1 34 0.1
+
+#NUMBER OF ATOM TYPES, BONDS, ANGLES, PROPER TORSIONS, IMPROPER TORSIONS
+10 10 15 12 2
+#15 the above are just for ZIF-8, need to change back when doing hybrids
+
+#ATOM TYPES, CHARGES [e], LJ PARAMETERS [sigma A, epsilon kcal/mol], MASS [g/mol], DEFINITION [what is is connected to] :: these should be ordered based on hierarchy and if any are the same, then we are FUCKED
+Zn  0.6894 2.462 0.0670 65.04 L1 NONE
+N  -0.2800 3.261 0.0373 14.07 L1 NONE
+O   0.1536 2.571 0.0238 1.005 L1 NONE
+C1  0.4184 3.431 0.0567 12.01 L1 N N C
+C2 -0.1910 3.431 0.0567 12.01 L1 C N H 
+C3 -0.5726 3.431 0.0567 12.01 L1 C H H H
+C4  0.4184 3.431 0.0567 12.01 L1 C O H
+H3  0.1481 2.571 0.0238 1.005 L2 C3
+H2  0.1536 2.571 0.0238 1.005 L2 C2
+H4  0.1536 2.571 0.0238 1.005 L2 C4
+
+#BONDS (STRETCHING) :: harmonic only
+C3 H3 680.0 0.959
+C1 C3 634.0 1.492
+N  C1 976.0 1.339
+Zn N  172.0 1.987
+N  C2 820.0 1.371
+C2 C2 1036.0 1.346
+C2 H2 734.0 0.929
+C1 C4 734.0 0.929
+C4 H4 734.0 0.929
+C4 O 734.0 0.929
+
+#ANGLES (BENDING) :: GAFF
+H3 C3 H3  70.0 109.50
+C1 C3 H3 100.0 109.44
+C2 C2 H2 100.0 125.67
+N  C2 H2 100.0 125.66
+Zn N  C1 100.0 127.50
+Zn N  C2  70.0 128.00
+C1 N  C2 140.0 105.24
+N  C2 C2 140.0 108.67
+N  Zn N   21.0 109.47
+N  C1 N  140.0 112.17
+N  C1 C3 140.0 123.89
+C1 C4 O  140.0 123.89
+C1 C4 H4 140.0 123.89
+O  C4 H4 140.0 123.89
+N  C1 C4 140.0 123.89
+
+#PROPER TORSIONS [kcal/mol degree m] :: OPLS 
+C2 N C1 N 4.80 180.0 2
+C2 N C1 C3 4.15 180.0 2
+C1 N C2 C2 4.80 180.0 2
+C1 N C2 H2 4.80 180.0 2
+N C2 C2 N 4.00 180.0 2
+N C2 C2 H2 4.00 180.0 2
+H2 C2 C2 H2 4.00 180.0 2
+Zn N C1 N 0.10 180.0 2
+Zn N C1 C3 0.10 180.0 2
+Zn N C2 C2 0.10 180.0 2
+N Zn N C1 0.174 0.0 3
+N Zn N C2 0.174 0.0 3
+C3 N C1 N 1.10 180.0 2 # these last two are ignored for now
+C2 H2 C2 N 1.10 180.0 2
+
+#MODEL IMPROPERS AS PROPER (LAMMPS CONVENTION TO SIMPLIFY THINGS)
+YES-improper-as-proper
+#IF this says no, then I need to have it add the appropriate information 
+
+#IMPROPER PLACEMENT POSITION #setting of 3 is consistent with AMBER fitting convention
+3
+
+#IMPROPER TORSIONS [kcal/mol degree m] :: place central atom according from setting above
+C3 N C1 N 1.10 180.0 2
+C2 H2 C2 N 1.10 180.0 2
+
+#MAKE THE RASPA-2.0 INPUT CIF?
+YES-RASPACIF
+
+#MAKE THE LAMMPS INPUT FILE FORMAT?
+YES-LAMMPS
+
+#CHECK ATOM TYPING IN LAMMPS INPUT FILE?
+NO-checktyping
+
+#MAKE LAMMPS VDW FILE
+YES-lmpVDW
+
+###EXTRA INFO (not read)### 
+ZIF8
+17.156614  17.156614   17.156614  90.0 90.0 90.0
+
+ZIF90
+17.361243 17.361243 17.361243 90.0 90.0 90.0
+
+ZIF7I
+22.989  22.989   15.763  90.0 90.0 120.0
+
+ZIF7II
+23.9479 21.3535 16.3493 90.278 93.275 108.412
+
+ZIF7III
+16.106 16.0452 19.512 90.0 96.622 90.0
+
+#NOTES#
+NUMBERFOWINDOWS-(2nUCs+2)
+
