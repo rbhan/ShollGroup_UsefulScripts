@@ -56,12 +56,6 @@ C1 N N
 #SHORT RANGE ORDER PARAMETER [defined by the probability of a linker seeing the other linker type], BETA, ERROR_TOL
 0.0 100000 0.01
 
-#INTENSITY CURVE INPUTS [YES/NO, Majority LINKER HYDROGEN TYPE, Minority LINKER HYDROGEN TYPE, RANGE (start,stop,spacing), USER_DEFINED file_of_spacings]
-NO H3 H4
-USER_DEFINED intensity_spacing.in DATA_50m_50_KRISHNA.in
-#USER_DEFINED intensity_spacing.in
-#RANGE 1 34 0.1
-
 #NUMBER OF ATOM TYPES, BONDS, ANGLES, PROPER TORSIONS, IMPROPER TORSIONS
 8 8 12 14 2
 #15 the above are just for ZIF-8, need to change back when doing hybrids
@@ -144,6 +138,12 @@ NO-checktyping
 
 #MAKE LAMMPS VDW FILE
 YES-lmpVDW
+
+
+
+
+
+
 
 ###EXTRA INFO (not read)### 
 ZIF8

@@ -122,56 +122,6 @@ def read_inputs():
           MCbeta=float(elements[1])
           RMC_errorTOL=float(elements[2])
 
-          index=find_line(myid,input+'/parameters.in','INTENSITY CURVE INPUTS')
-          global intensity_flag
-          global MAJORITY_HYDROGEN
-          global MINORITY_HYDROGEN
-          elements=lines[index+1].split()
-          intensity_flag=str(elements[0]).replace('\n','')
-          MAJORITY_HYDROGEN=str(elements[1]).replace('\n','')
-          MINORITY_HYDROGEN=str(elements[2]).replace('\n','')
-
-          global DISTANCE_SPACING_TYPE
-          elements=lines[index+2].split()
-          DISTANCE_SPACING_TYPE=str(elements[0]).replace('\n','')
-
-          global distances_to_look_fromD
-          global KRISHNA_DATA
-          if DISTANCE_SPACING_TYPE=='RANGE':
-            global startD
-            global stopD
-            global stepD
-            startD=int(elements[1])
-            stopD =int(elements[2])
-            stepD =float(elements[3])
-            distances_to_look_fromD=np.arange(start=startD,stop=stopD,step=stepD)
-          elif DISTANCE_SPACING_TYPE=='USER_DEFINED':
-            global file_name4distances
-            file_name4distances=str(elements[1]).replace('\n','')
-            print(file_name4distances)
-            distance_array=[]
-            file=open(input+'/'+str(file_name4distances),'r')
-            linestemp=file.readlines()
-            for line in linestemp:
-              ds=line.split()
-              distance_array.append(float(ds[0]))
-            file.close()
-            distances_to_look_fromD=np.array(distance_array,dtype='float')
-            print(distances_to_look_fromD)
-           
-            global file_name4data
-            file_name4data=str(elements[2]).replace('\n','')
-            print(file_name4data)
-            data_array=[]
-            file=open(input+'/'+str(file_name4data),'r')
-            linestemp=file.readlines()
-            for line in linestemp:
-              ds=line.split()
-              data_array.append(float(ds[1]))
-            file.close()
-            KRISHNA_DATA=np.array(data_array,dtype='float')
-            print(KRISHNA_DATA)
-
           index=find_line(myid,input+'/parameters.in','NUMBER OF ATOM TYPES, BONDS, ANGLES, PROPER TORSIONS, IMPROPER TORSIONS')
           global natypes
           global nbondtypes
@@ -821,7 +771,7 @@ def dihedrals(myid,natoms,conn_matrix_char,conn_matrix_nums,BOND_ARRAY):
   DIHEDRAL_ARRAY=np.vstack((DIHED_A,DIHED_B,DIHED_C,DIHED_D))
   DIHEDRAL_ARRAY=DIHEDRAL_ARRAY.transpose()
 
-  file=open('DIHEDRALS','w')
+  file=open(output+'/ALL_DIHEDRALS.data','w')
   for i in range(len(DIHEDRAL_ARRAY)):
     file.write(str(DIHEDRAL_ARRAY[i,0])+' '+str(DIHEDRAL_ARRAY[i,1])+' '+str(DIHEDRAL_ARRAY[i,2])+' '+str(DIHEDRAL_ARRAY[i,3])+'\n')
   file.close()
@@ -1076,13 +1026,18 @@ def dihedraltyping(dihedraldict,DIHEDRAL_ARRAY,atom_type):
 
   print('REAL NUMBER OF PROPER DIHEDRALS: '+str(len(dihedraltypes)))
   print('SIZE OF CORRECT DIHEDRAL ARRAY: '+str(len(REALDIHEDRALARRAY)))
-  print('SIZE OF CORRECT DIHEDRAL ARRAY2: '+str(np.sum(DIHED_FLAGS)))
+  print('SIZE OF CORRECT DIHEDRAL ARRAY_DOUBLE CHECK: '+str(np.sum(DIHED_FLAGS)))
 
+  #This finds what dihedrals have not yet been typed
+  save_untypeddihedral_strings=[]
   for c in range(len(DIHEDRAL_ARRAY)):
     if DIHED_FLAGS[c,0]==0:
-      astr2=[atom_type[DIHEDRAL_ARRAY[c,0]-1][0],atom_type[DIHEDRAL_ARRAY[c,1]-1][0],
-             atom_type[DIHEDRAL_ARRAY[c,2]-1][0],atom_type[DIHEDRAL_ARRAY[c,3]-1][0]]
-      print(astr2)
+      astr2=str([atom_type[DIHEDRAL_ARRAY[c,0]-1][0],atom_type[DIHEDRAL_ARRAY[c,1]-1][0],
+             atom_type[DIHEDRAL_ARRAY[c,2]-1][0],atom_type[DIHEDRAL_ARRAY[c,3]-1][0]])
+      #print(astr2)
+      save_untypeddihedral_strings.append(astr2)
+  save_untypeddihedral_strings=np.array(save_untypeddihedral_strings,dtype='str')
+  print('Untyped dihedrals: ',np.unique(save_untypeddihedral_strings))    
 
   return(dihedraltypes,REALDIHEDRALARRAY)
 
